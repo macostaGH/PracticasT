@@ -1,0 +1,306 @@
+import random
+import time
+import pickle
+
+class Personaje:
+    def __init__(self, nombre, salud, ataque, defensa, habilidades):
+        self.nombre = nombre
+        self.salud = salud
+        self.salud_maxima = salud
+        self.ataque = ataque
+        self.defensa = defensa
+        self.habilidades = habilidades
+        self.nivel = 1
+        self.experiencia = 0
+        self.monedas = 0
+        self.inventario = []
+
+    def atacar(self, objetivo):
+        if random.random() < 0.1:
+            danio = max(0, (random.randint(0, self.ataque) * 2) - objetivo.defensa)
+            print(f"¡{self.nombre} realiza un ataque crítico!")
+        else:
+            danio = max(0, random.randint(0, self.ataque) - objetivo.defensa)
+
+        objetivo.salud -= danio
+        return danio
+
+    def esta_vivo(self):
+        return self.salud > 0
+
+    def mostrar_habilidades(self):
+        return ", ".join(self.habilidades)
+
+    def subir_nivel(self):
+        self.nivel += 1
+        self.salud_maxima += 10
+        self.salud = self.salud_maxima
+        self.ataque += 5
+        self.defensa += 3
+        print(f"{self.nombre} ha subido de nivel a {self.nivel}!")
+
+    def recibir_experiencia(self, cantidad):
+        self.experiencia += cantidad
+        while self.experiencia >= 100 * self.nivel:
+            self.experiencia -= 100 * self.nivel
+            self.subir_nivel()
+            print(f"{self.nombre} ha subido de nivel a {self.nivel}!")
+
+    def mostrar_inventario(self):
+        if not self.inventario:
+            print(f"{self.nombre} tiene un inventario vacío.")
+        else:
+            print(f"{self.nombre}'s Inventario:")
+            for item in self.inventario:
+                print(item)
+            print("---------------")
+
+    def agregar_item(self, item):
+        self.inventario.append(item)
+        print(f"{self.nombre} ha obtenido {item}.")
+
+    def lanzar_hechizo(self, objetivo):
+        if "Lanzar hechizo" in self.habilidades:
+            danio = random.randint(10, 20)
+            objetivo.salud -= danio
+            print(f"{self.nombre} lanza un hechizo y hace {danio} de daño a {objetivo.nombre}.")
+        else:
+            print(f"{self.nombre} no conoce la habilidad 'Lanzar hechizo'.")
+
+class Enemigo(Personaje):
+    def __init__(self, nombre, salud, ataque, defensa, habilidades, experiencia_ganada, recompensa_monedas):
+        super().__init__(nombre, salud, ataque, defensa, habilidades)
+        self.experiencia_ganada = experiencia_ganada
+        self.recompensa_monedas = recompensa_monedas
+
+class Tienda:
+    def __init__(self):
+        self.inventario = {
+            "Poción de curación": 20,
+            "Espada afilada": 30,
+            "Armadura resistente": 25,
+            "Amuleto de protección": 40
+        }
+
+    def mostrar_inventario(self):
+        print("---- Tienda ----")
+        for item, precio in self.inventario.items():
+            print(f"{item}: {precio} monedas")
+        print("---------------")
+
+    def comprar(self, jugador, item):
+        if item in self.inventario and jugador.monedas >= self.inventario[item]:
+            jugador.monedas -= self.inventario[item]
+
+            if item == "Poción de curación":
+                jugador.salud = min(jugador.salud + 30, jugador.salud_maxima)
+                print(f"{jugador.nombre} ha comprado una poción de curación y se ha curado.")
+            elif item == "Espada afilada":
+                jugador.ataque += 10
+                print(f"{jugador.nombre} ha comprado una espada afilada y ha aumentado su ataque.")
+            elif item == "Armadura resistente":
+                jugador.defensa += 5
+                print(f"{jugador.nombre} ha comprado una armadura resistente y ha aumentado su defensa.")
+            elif item == "Amuleto de protección":
+                jugador.defensa += 10
+                print(f"{jugador.nombre} ha comprado un Amuleto de protección y ha aumentado su defensa aún más.")
+
+            del self.inventario[item]
+        else:
+            print("No puedes comprar este objeto o no tienes suficientes monedas.")
+
+class Combate:
+    def __init__(self, jugador, enemigo):
+        self.jugador = jugador
+        self.enemigo = enemigo
+
+    def turno_jugador(self):
+        print(f"{self.jugador.nombre}'s Turno:")
+        print(f"Habilidades: {self.jugador.mostrar_habilidades()}")
+
+        accion = input("¿Qué deseas hacer? (atacar/usar habilidad/usar objeto): ").lower()
+
+        if accion == "atacar":
+            danio_jugador = self.jugador.atacar(self.enemigo)
+            print(f"{self.jugador.nombre} ataca a {self.enemigo.nombre} y le hace {danio_jugador} de daño.")
+        elif accion == "usar habilidad":
+            habilidad = input("Elige una habilidad para usar: ")
+            if habilidad in self.jugador.habilidades:
+                if habilidad == "Lanzar hechizo":
+                    self.jugador.lanzar_hechizo(self.enemigo)
+                else:
+                    danio = random.randint(5, 15)
+                    self.enemigo.salud -= danio
+                    print(f"{self.jugador.nombre} utiliza {habilidad} y hace {danio} de daño a {self.enemigo.nombre}.")
+            else:
+                print(f"{self.jugador.nombre} no conoce la habilidad {habilidad}.")
+        elif accion == "usar objeto":
+            self.jugador.mostrar_inventario()
+            item = input("Elige un objeto para usar: ")
+            if item in self.jugador.inventario:
+                if item == "Poción de curación":
+                    self.jugador.salud = min(self.jugador.salud + 30, self.jugador.salud_maxima)
+                    print(f"{self.jugador.nombre} ha usado una poción de curación y se ha curado.")
+                else:
+                    print(f"{self.jugador.nombre} ha usado un {item}.")
+                    # Aquí puedes agregar efectos adicionales para otros objetos
+                self.jugador.inventario.remove(item)
+            else:
+                print(f"{self.jugador.nombre} no tiene {item} en su inventario.")
+        else:
+            print("Acción no válida. Elige 'atacar', 'usar habilidad' o 'usar objeto'.")
+
+    def turno_enemigo(self):
+        print(f"{self.enemigo.nombre}'s Turno:")
+        danio_enemigo = max(0, random.randint(0, self.enemigo.ataque) - self.jugador.defensa)
+        self.jugador.salud -= danio_enemigo
+        print(f"{self.enemigo.nombre} ataca a {self.jugador.nombre} y le hace {danio_enemigo} de daño.")
+
+    def combatir(self):
+        while self.jugador.esta_vivo() and self.enemigo.esta_vivo():
+            print(f"\n{self.jugador.nombre} (Salud: {self.jugador.salud}) vs {self.enemigo.nombre} (Salud: {self.enemigo.salud})")
+            self.turno_jugador()
+            if self.enemigo.esta_vivo():
+                self.turno_enemigo()
+            else:
+                print(f"{self.jugador.nombre} ha derrotado a {self.enemigo.nombre}.")
+                # Aumentar las recompensas de monedas y experiencia después del combate
+                monedas_ganadas = random.randint(20, 40)
+                experiencia_ganada = self.enemigo.experiencia_ganada
+                self.jugador.monedas += monedas_ganadas
+                self.jugador.recibir_experiencia(experiencia_ganada)
+                print(f"Ganaste {monedas_ganadas} monedas y {experiencia_ganada} puntos de experiencia.")
+                break
+
+        if not self.jugador.esta_vivo():
+            print(f"{self.enemigo.nombre} ha derrotado a {self.jugador.nombre}.")
+
+class Mapa:
+    def __init__(self):
+        self.eventos_posibles = ["combate", "evento_aleatorio", "tienda"]
+        self.mapa_actual = 0
+        self.misiones_completadas = 0
+
+    def explorar(self, jugador):
+        print("\nExplorando el mapa...")
+        time.sleep(1)
+        evento = random.choice(self.eventos_posibles)
+        if evento == "combate":
+            print("¡Te has encontrado con un enemigo!")
+            enemigo = Enemigo("Ogro", 50, 20, 10, ["Golpe fuerte"], 50, 30)
+            combate = Combate(jugador, enemigo)
+            combate.combatir()
+        elif evento == "evento_aleatorio":
+            print("¡Has encontrado un evento aleatorio!")
+            self.realizar_evento_aleatorio(jugador)
+        elif evento == "tienda":
+            print("¡Has encontrado una tienda!")
+            self.visitar_tienda(jugador)
+
+    def generar_evento(self):
+        return random.choice(self.eventos_posibles)
+
+    def realizar_evento_aleatorio(self, jugador):
+        opcion = random.randint(1, 3)
+        if opcion == 1:
+            print("Te encuentras con un viajero amigable que te da una recompensa.")
+            recompensa = random.choice(["Poción de curación", "Amuleto de protección"])
+            jugador.agregar_item(recompensa)
+        elif opcion == 2:
+            print("Encuentras un cofre del tesoro escondido. ¡Obtienes monedas!")
+            monedas_encontradas = random.randint(10, 30)
+            jugador.monedas += monedas_encontradas
+            print(f"Ganaste {monedas_encontradas} monedas.")
+        else:
+            print("Te pierdes en el bosque y tienes que enfrentarte a un lobo.")
+            lobo = Enemigo("Lobo", 40, 15, 5, ["Mordisco"], 40, 20)
+            combate = Combate(jugador, lobo)
+            combate.combatir()
+
+    def visitar_tienda(self, jugador):
+        tienda = Tienda()
+        tienda.mostrar_inventario()
+        while True:
+            accion = input("¿Qué deseas hacer? (comprar/salir): ").lower()
+            if accion == "comprar":
+                item = input("Elige un objeto para comprar: ")
+                tienda.comprar(jugador, item)
+            elif accion == "salir":
+                print("Sales de la tienda.")
+                break
+            else:
+                print("Acción no válida. Elige 'comprar' o 'salir'.")
+
+    def mostrar_estado(self):
+        return f"Mapa actual: {self.mapa_actual} - Misiones completadas: {self.misiones_completadas}/3"
+
+class Juego:
+    def __init__(self):
+        self.jugador = None
+
+    def pantalla_de_inicio(self):
+        print("Bienvenido al juego de aventuras.")
+        while True:
+            print("1. Comenzar una nueva partida")
+            print("2. Cargar partida")
+            print("3. Salir")
+            opcion = input("Elige una opción: ")
+            if opcion == "1":
+                self.crear_jugador()
+                self.comenzar()
+                break
+            elif opcion == "2":
+                self.cargar_partida()
+                if self.jugador is not None:
+                    self.comenzar()
+                break
+            elif opcion == "3":
+                print("¡Hasta luego!")
+                break
+            else:
+                print("Opción no válida. Elige 1, 2 o 3.")
+
+    def crear_jugador(self):
+        nombre = input("Ingresa el nombre de tu personaje: ")
+        habilidades = ["Golpe rápido", "Lanzar hechizo", "Ataque furtivo", "Curación ligera"]
+        self.jugador = Personaje(nombre, 100, 30, 15, habilidades)
+        print(f"Bienvenido, {nombre}.")
+
+    def comenzar(self):
+        mapa = Mapa()
+
+        while self.jugador.esta_vivo() and mapa.misiones_completadas < 3:
+            print(mapa.mostrar_estado())
+            print(self.jugador.mostrar_habilidades())
+            mapa.explorar(self.jugador)
+            if random.random() < 0.3:
+                self.realizar_mision()
+                mapa.misiones_completadas += 1
+
+        if self.jugador.esta_vivo():
+            print("¡Has completado todas las misiones y ganado el juego!")
+        else:
+            print("¡El juego ha terminado!")
+
+    def realizar_mision(self):
+        print("¡Has recibido una nueva misión!")
+        print("Completa la misión para ganar recompensas.")
+        # Implementa una lógica de misión más elaborada aquí.
+        input("Presiona Enter para completar la misión.")
+
+    def guardar_partida(self):
+        with open("partida_guardada.pkl", "wb") as archivo:
+            pickle.dump(self.jugador, archivo)
+        print("Partida guardada.")
+
+    def cargar_partida(self):
+        try:
+            with open("partida_guardada.pkl", "rb") as archivo:
+                self.jugador = pickle.load(archivo)
+                print("Partida cargada.")
+        except FileNotFoundError:
+            print("No se encontró una partida guardada.")
+
+if __name__ == "__main__":
+    juego = Juego()
+    juego.pantalla_de_inicio()
