@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nike - Ropa en Blanco y Negro</title>
+    <style>
+/* Reset de estilos */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Estilos generales */
+body {
+    font-family: 'Roboto', Arial, sans-serif;
+    background-color: #2b2b2b;
+    color: #fff;
+}
+
+header {
+    background-color: #000000;
+    text-align: center;
+    padding: 20px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+header h1 {
+    font-size: 3rem;
+    margin: 0;
+    letter-spacing: 4px;
+    color: #ffffff;
+}
+
+nav {
+    background-color: #444343;
+    text-align: center;
+    padding: 10px 0;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #fff;
+    padding: 15px 25px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+    font-weight: bold;
+}
+
+nav ul li a:hover {
+    background-color: #61dafb;
+    color: #1c1c1c;
+}
+
+/* Estilos para secciones */
+section {
+    padding: 30px;
+    background-color: #746969;
+    margin: 20px;
+    box-shadow: 0 0 20px rgba(105, 97, 97, 0.5);
+    border-radius: 15px;
+}
+
+h2 {
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+/* Estilos personalizados para las secciones */
+#inicio {
+    background-image: url('nike-banner.jpg');
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+    padding: 100px 0;
+    position: relative;
+}
+
+#inicio h2 {
+    font-size: 3.5rem;
+    margin: 20px 0;
+    letter-spacing: 2px;
+    color: #ffffff;
+}
+
+#inicio p {
+    font-size: 1.2rem;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+#inicio::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(39, 31, 31, 0.4));
+}
+
+#productos {
+    background-color: #292929;
+}
+
+#productos h2 {
+    margin-top: 0;
+    text-align: center;
+    color: #fff;
+}
+
+#productos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+.producto {
+    background-color: #333;
+    border: 1px solid #444;
+    padding: 20px;
+    margin: 20px;
+    width: calc(30% - 40px);
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.producto img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    transition: transform 0.3s;
+}
+
+.producto:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.producto h3 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+    color: #fff;
+}
+
+.producto p {
+    font-size: 1.2rem;
+    color: #ccc;
+}
+
+.producto .boton-comprar {
+    display: block;
+    margin-top: 20px;
+    background-color: #1c1c1c;
+    color: #fff;
+    border: none;   
+    padding: 15px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.producto .boton-comprar:hover {
+    background-color: #444;
+}
+
+/* Estilos para el filtro de productos */
+#filtro-precio {
+    margin-top: 30px;
+    text-align: center;
+}
+
+#filtro-precio label {
+    margin-right: 10px;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+#filtro-precio input {
+    width: 80px;
+    padding: 12px;
+    border: 1px solid #444;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    color: #ccc;
+}
+
+#filtro-precio button {
+    background-color: #1c1c1c;
+    color: #fff;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#filtro-precio button:hover {
+    background-color: #444;
+}
+
+/* Estilos para el carrito de compras */
+#carrito {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(65, 65, 65, 0.9);
+    border: 1px solid #3d3d3d;
+    padding: 20px;
+    border-radius: 15px;
+    display: none;
+    max-width: 300px;
+    overflow-y: auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+#carrito h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dfdfdf;
+    font-size: 1.8rem;
+    color: #dfdfdf;
+}
+
+.producto-carrito {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #000000;
+}
+
+.producto-carrito .nombre {
+    flex-grow: 1;
+    margin-left: 10px;
+    font-size: 1.2rem;
+    color: #dfdfdf;
+}
+
+.producto-carrito .precio {
+    margin-right: 10px;
+    font-size: 1.2rem;
+    color: #ffffff;
+}
+
+.boton-comprar-finalizar {
+    background-color: #4CAF50;
+    color: #ffffff;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1.2rem;
+    margin-top: 20px;
+}
+
+.boton-comprar-finalizar:hover {
+    background-color: #45a049;
+}
+
+.producto-carrito .boton-eliminar {
+    background-color: #ff6666;
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+}
+
+.producto-carrito .boton-eliminar:hover {
+    background-color: #ff3333;
+}
+
+/* Estilos para el botón de eliminar del carrito */
+.producto-carrito .boton-eliminar {
+    background-color: #ff6666;
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1rem;
+}
+
+.producto-carrito .boton-eliminar:hover {
+    background-color: #ff3333;
+}
+
+/* Estilos para el botón de finalizar compra */
+.boton-comprar-finalizar {
+    background-color: #4CAF50;
+    color: #ffffff;
+    border: none;
+    padding: 15px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 1.2rem;
+    margin-top: 20px; /* Añadido para separar del contenido anterior */
+}
+
+.boton-comprar-finalizar:hover {
+    background-color: #45a049;
+}
+
+/* Estilos para la sección de contacto */
+#contacto {
+    background-color: #1c1c1c;
+    text-align: center;
+    padding: 50px 0;
+    border-radius: 15px;
+}
+
+#contacto h2 {
+    margin-top: 0;
+    color: #fff;
+    font-size: 3.5rem;
+    letter-spacing: 2px;
+}
+
+#informacion-contacto {
+    margin: 30px 0;
+    color: #777;
+    font-size: 1.2rem;
+}
+
+#informacion-contacto p {
+    margin: 10px 0;
+}
+
+#formulario-contacto {
+    margin-top: 30px;
+}
+
+#formulario-contacto label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+#formulario-contacto input[type="text"],
+#formulario-contacto textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #777;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    color: #777;
+    background-color: #444;
+}
+
+#formulario-contacto button {
+    background-color: #1c1c1c;
+    color: #fff;
+    border: none;
+    padding: 20px 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#formulario-contacto button:hover {
+    background-color: #444;
+}
+
+    </style>
+    <script>
+        // Datos de productos (nombre, precio y disponibilidad)
+        var productos = [
+            { nombre: 'Camiseta Nike', precio: 30, disponible: true, imagen: 'camiseta.jpg', categoria: 'Camisetas' },
+            { nombre: 'Pantalones Nike', precio: 40, disponible: true, imagen: 'pantalones.jpg', categoria: 'Pantalones' },
+            { nombre: 'Buzo Nike', precio: 50, disponible: true, imagen: 'buzo.jpg', categoria: 'Buzos' },
+            { nombre: 'Remera Nike', precio: 25, disponible: true, imagen: 'remera.jpg', categoria: 'Remeras' },
+            { nombre: 'Shorts Deportivos Nike', precio: 20, disponible: true, imagen: 'shorts.jpg', categoria: 'Shorts' },
+            { nombre: 'Gorra Nike', precio: 15, disponible: true, imagen: 'gorra.jpg', categoria: 'Accesorios' } ,
+            { nombre: 'Mochila Nike', precio: 35, disponible: true, imagen: 'mochila.jpg', categoria: 'Accesorios' },
+            { nombre: 'Sudadera Nike', precio: 45, disponible: true, imagen: 'sudadera.jpg', categoria: 'Sudaderas' },
+            { nombre: 'Zapatillas Nike', precio: 60, disponible: true, imagen: 'zapatillas.jpg', categoria: 'Zapatillas' },
+        ];
+        
+        // Carrito de compras
+        var carrito = [];
+
+        // Función para mostrar una sección y ocultar las demás
+        function mostrarSeccion(seccionId) {
+            var secciones = document.querySelectorAll('section');
+            for (var i = 0; i < secciones.length; i++) {
+                secciones[i].style.display = 'none';
+            }
+            document.getElementById(seccionId).style.display = 'block';
+        }
+
+        // Función para mostrar productos
+        function mostrarProductos(productos) {
+            var productosContainer = document.getElementById('productos-container');
+            productosContainer.innerHTML = '';
+            for (var i = 0; i < productos.length; i++) {
+                var producto = productos[i];
+                var botonCompra = producto.disponible
+                    ? `<button class="boton boton-comprar" onclick="agregarAlCarrito(${i})">Comprar</button>`
+                    : '<p>No disponible</p>';
+                productosContainer.innerHTML += `
+                    <div class="producto">
+                        <img src="${producto.imagen}" alt="${producto.nombre}">
+                        <h3>${producto.nombre}</h3>
+                        <p>Precio: $${producto.precio}</p>
+                        <p>Categoría: ${producto.categoria}</p>
+                        ${botonCompra}
+                    </div>
+                `;
+            }
+        }
+
+        // Función para agregar un producto al carrito
+        function agregarAlCarrito(productoIndex) {
+            var producto = productos[productoIndex];
+            carrito.push(producto);
+            producto.disponible = false; // Marcar el producto como no disponible
+            actualizarCarrito();
+        }
+
+        // Función para eliminar un producto del carrito
+        function eliminarDelCarrito(productoIndex) {
+            var producto = carrito[productoIndex];
+            producto.disponible = true; // Marcar el producto como disponible nuevamente
+            carrito.splice(productoIndex, 1);
+            actualizarCarrito();
+        }
+
+        // Función para actualizar la vista del carrito
+        function actualizarCarrito() {
+            var carritoContainer = document.getElementById('carrito');
+            carritoContainer.innerHTML = '';
+            if (carrito.length === 0) {
+                carritoContainer.style.display = 'none';
+                return;
+            }
+            carritoContainer.style.display = 'block';
+            var total = 0;
+            var carritoItems = '';
+            for (var i = 0; i < carrito.length; i++) {
+                var producto = carrito[i];
+                total += producto.precio;
+                carritoItems += `
+                    <div class="producto-carrito">
+                        <div class="nombre">${producto.nombre}</div>
+                        <div class="precio">$${producto.precio}</div>
+                        <div class="boton boton-eliminar" onclick="eliminarDelCarrito(${i})">Eliminar</div>
+                    </div>
+                `;
+            }
+            carritoContainer.innerHTML = `
+                <h3>Carrito de Compras</h3>
+                ${carritoItems}
+                <p>Total: $${total}</p>
+                <div class="boton boton-comprar-finalizar" onclick="finalizarCompra(${total})">Finalizar Compra</div>
+            `;
+        }
+
+        // Función para finalizar la compra (simulación)
+        function finalizarCompra(total) {
+            var carritoContainer = document.getElementById('carrito');
+            carritoContainer.innerHTML = `
+                <h3>¡Gracias por tu compra!</h3>
+                <p>Total: $${total}</p>
+            `;
+
+            // Restablecer el estado de disponibilidad de los productos comprados
+            for (var i = 0; i < carrito.length; i++) {
+                carrito[i].disponible = true;
+            }
+
+            // Vaciar el carrito
+            carrito = [];
+
+            // Agregar un temporizador para ocultar el mensaje después de 5 segundos
+            setTimeout(function() {
+                carritoContainer.innerHTML = ''; // Limpiar el contenido del carrito
+                carritoContainer.style.display = 'none'; // Ocultar el carrito
+            }, 5000); // 5000 milisegundos = 5 segundos
+        }
+
+        // Función para filtrar productos por precio
+        function filtrarPorPrecio(minPrecio, maxPrecio) {
+            var productosFiltrados = productos.filter(function(producto) {
+                return producto.precio >= minPrecio && producto.precio <= maxPrecio;
+            });
+            mostrarProductos(productosFiltrados);
+        }
+
+            // Función para renderizar productos filtrados por precio
+    function renderizarProductosFiltrados(productosFiltrados) {
+        var contenedorProductos = document.getElementById('productos-container');
+        contenedorProductos.innerHTML = '';
+
+        productosFiltrados.forEach(function (producto, index) {
+            var productoHTML = `
+                <div class="producto">
+                    <img src="${producto.imagen}" alt="${producto.nombre}">
+                    <h3>${producto.nombre}</h3>
+                    <p>Categoría: ${producto.categoria}</p>
+                    <p>Precio: $${producto.precio}</p>
+                    <button class="boton-comprar" onclick="agregarAlCarrito(${index})">Agregar al carrito</button>
+                </div>
+            `;
+            contenedorProductos.innerHTML += productoHTML;
+        });
+    }
+
+        // Mostrar la sección de inicio al cargar la página
+        window.onload = function() {
+            mostrarSeccion('inicio');
+            mostrarProductos(productos); // Mostrar todos los productos inicialmente
+        };
+
+        // Función para enviar un mensaje desde el formulario de contacto
+        function enviarMensaje() {
+            var nombre = document.getElementById('nombre').value;
+            var email = document.getElementById('email').value;
+            var mensaje = document.getElementById('mensaje').value;
+            if (nombre && email && mensaje) {
+                alert('Mensaje enviado con éxito');
+                document.getElementById('nombre').value = '';
+                document.getElementById('email').value = '';
+                document.getElementById('mensaje').value = '';
+            } else {
+                alert('Por favor, completa todos los campos.');
+            }
+        }
+        
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Nike</h1>
+        <nav>
+            <ul>
+                <li><a href="#inicio" onclick="mostrarSeccion('inicio')">Inicio</a></li>
+                <li><a href="#productos" onclick="mostrarSeccion('productos')">Productos</a></li>
+                <li><a href="#contacto" onclick="mostrarSeccion('contacto')">Contacto</a></li>
+                <li><a href="#carrito" onclick="mostrarSeccion('carrito')">Carrito</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="inicio" style="display: block;">
+        <h2>Bienvenido a Nike</h2>
+        <p>Descubre la ultima tecnilogia en indumentaria deportiva.</p>
+        <h3>Nuestra Historia</h3>
+        <p>Desde 1964, Nike se ha convertido en una de las marcas más reconocidas en el mundo del deporte. Fundada por Bill Bowerman y Phil Knight, nuestra empresa ha estado comprometida con la innovación y el rendimiento. Desde el icónico "Swoosh" hasta tecnologías revolucionarias como Air Max, Nike ha liderado el camino en la industria del calzado deportivo. Nuestra pasión por el deporte nos impulsa a crear productos de alta calidad para atletas de todos los niveles.</p>
+        <h3>Metodos de Pago</h3>
+        <p>Aceptamos una variedad de métodos de pago para tu conveniencia, incluyendo tarjetas de crédito y débito, PayPal y Apple Pay. Comprar en Nike es seguro y sencillo. ¡Haz tu pedido hoy!</p>
+    </section>
+
+    <section id="productos">
+        <h2>Productos Destacados</h2>
+        <!-- Filtro de productos por precio -->
+        <div id="filtro-precio">
+            <label for="min-precio">Precio mínimo:</label>
+            <input type="number" id="min-precio" min="0">
+            <label for="max-precio">Precio máximo:</label>
+            <input type="number" id="max-precio" min="0">
+            <button class="boton boton-comprar" onclick="filtrarPorPrecio(parseInt(document.getElementById('min-precio').value), parseInt(document.getElementById('max-precio').value))">Filtrar</button>
+        </div>
+        <!-- Contenedor de productos -->
+        <div id="productos-container"></div>
+    </section>
+
+    <section id="contacto">
+        <h2>Contacto</h2>
+        <div id="informacion-contacto">
+            <p>Estamos disponibles las 24 horas, los 7 días de la semana.</p>
+            <p>Teléfono: 123-456-7890</p>
+            <p>Email: info@nike.com</p>
+        </div>
+        <h3>Sucursales</h3>
+        <p>Visítanos en nuestras principales sucursales en todo el mundo:</p>
+        <ul>
+            <li>Dirección: Gran Via, Madrid 1</li>
+            <li>Dirección: 9 de Julio, Buenos Aires 2</li>
+            <li>Dirección: Quinta Avenida, New York 3</li>
+        </ul>
+        <h3>Envíanos un Mensaje</h3>
+        <div id="formulario-contacto">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" placeholder="Tu nombre">
+            <label for="email">Email:</label>
+            <input type="text" id="email" placeholder="Tu email">
+            <label for="mensaje">Mensaje:</label>
+            <textarea id="mensaje" rows="4" placeholder="Escribe tu mensaje"></textarea>
+            <button class="boton boton-comprar" onclick="enviarMensaje()">Enviar Mensaje</button>
+        </div>
+    </section>
+
+    <section id="carrito">
+        <!-- Contenido del carrito se generará dinámicamente aquí -->
+    </section>
+</body>
+</html>
+
